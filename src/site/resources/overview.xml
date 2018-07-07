@@ -21,7 +21,7 @@
   <p>
     The <tt>jmulticlose</tt> package implements a simple extension to the Java
     <tt>try-with-resources</tt> statement that allows for closing many resources
-    at one without nested statements in a type-safe manner.
+    at once without nested statements in a type-safe manner.
   </p>
 
 </div>
