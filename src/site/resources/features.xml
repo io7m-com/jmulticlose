@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<div xmlns="http://www.w3.org/1999/xhtml">
+  <ul>
+    <li>Close multiple resources at once without nested scopes and without a loss of type-safety.</li>
+    <li><a href="https://www.osgi.org/">OSGi</a>-ready</li>
+    <li><a href="https://en.wikipedia.org/wiki/Java_Platform_Module_System">JPMS</a>-ready</li>
+    <li>ISC license</li>
+    <li>100% automated unit test coverage.</li>
+  </ul>
+</div>
