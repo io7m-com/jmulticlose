@@ -1,0 +1,27 @@
+<div xmlns="http://www.w3.org/1999/xhtml">
+  <p class="shields">
+      <a href="https://travis-ci.org/io7m/jmulticlose">
+         <img src="https://img.shields.io/travis/io7m/jmulticlose.png?style=flat-square"
+              alt="Build status"/>
+      </a>
+      <a href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.io7m.jmulticlose%22">
+         <img src="https://img.shields.io/maven-central/v/com.io7m.jmulticlose/com.io7m.jmulticlose.png?style=flat-square"
+              alt="Maven Central"/>
+      </a>
+      <a href="https://www.codacy.com/app/github_79/jmulticlose">
+         <img src="https://img.shields.io/codacy/grade/8fd0f85056594033b78f042920213423.png?style=flat-square"
+              alt="Codacy"/>
+      </a>
+      <a href="https://codecov.io/gh/io7m/jmulticlose">
+         <img src="https://img.shields.io/codecov/c/github/io7m/jmulticlose.png?style=flat-square"
+              alt="Codecov"/>
+      </a>
+  </p>
+
+  <p>
+    The <tt>jmulticlose</tt> package implements a simple extension to the Java
+    <tt>try-with-resources</tt> statement that allows for closing many resources
+    at once without nested statements in a type-safe manner.
+  </p>
+
+</div>
