@@ -24,4 +24,25 @@
     at once - without nested or compound statements - in a type-safe manner.
   </p>
 
+  <h4>Five-second Tutorial</h4>
+
+  <p>
+    Create a <tt>CloseableCollection</tt> to track resources. Add resources to it. The
+    resources will be closed when the collection is closed. All resources will be closed
+    even if any of the individual resources raises an exception.
+  </p>
+
+  <p>
+     <pre>  final Resource r0;
+  final Resource r1;
+  final Resource r2;
+
+  try (CloseableCollectionType&lt;ClosingResourceFailedException&gt; c = CloseableCollection.create()) {
+    r0 = c.add(new Resource(0));
+    r1 = c.add(new Resource(1));
+    r2 = c.add(new Resource(2));
+  }
+     </pre>
+  </p>
+
 </div>
