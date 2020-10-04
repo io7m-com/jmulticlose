@@ -8,10 +8,6 @@
          <img src="https://img.shields.io/maven-central/v/com.io7m.jmulticlose/com.io7m.jmulticlose.png?style=flat-square"
               alt="Maven Central"/>
       </a>
-      <a href="https://www.codacy.com/app/github_79/jmulticlose">
-         <img src="https://img.shields.io/codacy/grade/8fd0f85056594033b78f042920213423.png?style=flat-square"
-              alt="Codacy"/>
-      </a>
       <a href="https://codecov.io/gh/io7m/jmulticlose">
          <img src="https://img.shields.io/codecov/c/github/io7m/jmulticlose.png?style=flat-square"
               alt="Codecov"/>
