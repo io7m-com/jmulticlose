@@ -9,12 +9,12 @@
   <parent>
     <groupId>com.io7m.primogenitor</groupId>
     <artifactId>com.io7m.primogenitor.full</artifactId>
-    <version>7.0.0</version>
+    <version>7.1.0</version>
   </parent>
 
   <groupId>com.io7m.jmulticlose</groupId>
   <artifactId>com.io7m.jmulticlose</artifactId>
-  <version>0.0.2</version>
+  <version>1.0.0</version>
 
   <packaging>pom</packaging>
   <name>com.io7m.jmulticlose</name>
