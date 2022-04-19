@@ -14,7 +14,7 @@
 
   <groupId>com.io7m.jmulticlose</groupId>
   <artifactId>com.io7m.jmulticlose</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1-SNAPSHOT</version>
 
   <packaging>pom</packaging>
   <name>com.io7m.jmulticlose</name>
@@ -27,7 +27,7 @@
   </modules>
 
   <properties>
-    <io7m.api.previousVersion>0.0.1</io7m.api.previousVersion>
+    <io7m.api.previousVersion>1.0.0</io7m.api.previousVersion>
   </properties>
 
   <licenses>
