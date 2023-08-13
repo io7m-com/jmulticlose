@@ -23,25 +23,27 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Supplier;
 
 /**
- * The default implementation of the {@link CloseableCollectionType} interface.
+ * The default implementation of the {@link CloseableTrackerType} interface.
  *
  * @param <E> On close failures
  */
 
 @ThreadSafe
-public final class CloseableCollection<E extends Exception> implements CloseableCollectionType<E>
+public final class CloseableTracker<E extends Exception> implements CloseableTrackerType<E>
 {
-  private final ConcurrentLinkedDeque<AutoCloseable> stack;
+  private final ConcurrentLinkedDeque<CloseableType> stack;
   private final Supplier<E> exceptions;
 
-  private CloseableCollection(final Supplier<E> in_exceptions)
+  private CloseableTracker(final Supplier<E> in_exceptions)
   {
-    this.exceptions = Objects.requireNonNull(in_exceptions, "exceptions");
-    this.stack = new ConcurrentLinkedDeque<>();
+    this.exceptions =
+      Objects.requireNonNull(in_exceptions, "exceptions");
+    this.stack =
+      new ConcurrentLinkedDeque<>();
   }
 
   /**
-   * Create a new closeable collection.
+   * Create a new closeable tracker.
    *
    * @param exceptions A supplier of exceptions
    * @param <E>        The precise type of exceptions thrown on close failures
@@ -49,19 +51,19 @@ public final class CloseableCollection<E extends Exception> implements Closeable
    * @return A new collection
    */
 
-  public static <E extends Exception> CloseableCollectionType<E> create(
+  public static <E extends Exception> CloseableTrackerType<E> create(
     final Supplier<E> exceptions)
   {
-    return new CloseableCollection<>(exceptions);
+    return new CloseableTracker<>(exceptions);
   }
 
   /**
-   * Create a new closeable collection.
+   * Create a new closeable tracker.
    *
    * @return A new collection
    */
 
-  public static CloseableCollectionType<ClosingResourceFailedException> create()
+  public static CloseableTrackerType<ClosingResourceFailedException> create()
   {
     return create(() -> new ClosingResourceFailedException(
       "One or more resources could not be closed."));
@@ -91,9 +93,19 @@ public final class CloseableCollection<E extends Exception> implements Closeable
   }
 
   @Override
-  public <T extends AutoCloseable> T add(final T resource)
+  public <T extends CloseableType> T add(
+    final T resource)
   {
-    this.stack.push(Objects.requireNonNull(resource, "resource"));
+    this.stack.push(resource);
+    this.stack.removeIf(CloseableType::isClosed);
     return resource;
+  }
+
+  @Override
+  public <T extends CloseableType> void remove(
+    final T resource)
+  {
+    this.stack.remove(resource);
+    this.stack.removeIf(CloseableType::isClosed);
   }
 }

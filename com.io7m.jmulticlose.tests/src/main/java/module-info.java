@@ -15,12 +15,17 @@
  */
 
 /**
- * Collective try-with-resources (Core)
+ * Collective try-with-resources (Test suite)
  */
 
-@Export
-@Version("1.1.0")
-package com.io7m.jmulticlose.core;
+open module com.io7m.jmulticlose.tests
+{
+  requires com.io7m.jmulticlose.core;
 
-import org.osgi.annotation.bundle.Export;
-import org.osgi.annotation.versioning.Version;
+  requires org.slf4j;
+
+  requires transitive org.junit.jupiter.api;
+  requires transitive org.junit.jupiter.engine;
+  requires transitive org.junit.platform.commons;
+  requires transitive org.junit.platform.engine;
+}
