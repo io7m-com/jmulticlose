@@ -45,6 +45,12 @@ public interface CloseableCollectionType<E extends Exception> extends
     throws E;
 
   /**
+   * @return The size of the collection
+   */
+
+  int size();
+
+  /**
    * Add a resource to be closed when this collection is closed.
    *
    * @param resource The resource

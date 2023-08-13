@@ -50,6 +50,12 @@ public interface CloseableTrackerType<E extends Exception> extends AutoCloseable
     throws E;
 
   /**
+   * @return The number of items in the tracker
+   */
+
+  int size();
+
+  /**
    * Add a resource to be closed when this tracker is closed.
    *
    * @param resource The resource

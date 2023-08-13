@@ -91,6 +91,12 @@ public final class CloseableCollection<E extends Exception> implements Closeable
   }
 
   @Override
+  public int size()
+  {
+    return this.stack.size();
+  }
+
+  @Override
   public <T extends AutoCloseable> T add(final T resource)
   {
     this.stack.push(Objects.requireNonNull(resource, "resource"));

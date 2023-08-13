@@ -30,8 +30,8 @@ import java.util.function.Supplier;
  */
 
 @ThreadSafe
-public final class CloseableTracker<E extends Exception> implements
-  CloseableTrackerType<E>
+public final class CloseableTracker<E extends Exception>
+  implements CloseableTrackerType<E>
 {
   private final ConcurrentLinkedDeque<CloseableType> stack;
   private final Supplier<E> exceptions;
@@ -92,6 +92,12 @@ public final class CloseableTracker<E extends Exception> implements
     if (e != null) {
       throw e;
     }
+  }
+
+  @Override
+  public int size()
+  {
+    return this.stack.size();
   }
 
   @Override

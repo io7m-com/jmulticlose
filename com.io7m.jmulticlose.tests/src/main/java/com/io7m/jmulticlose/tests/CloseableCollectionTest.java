@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 import java.io.Closeable;
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
  * Tests for {@link CloseableCollection}.
  */
@@ -62,6 +64,8 @@ public final class CloseableCollectionTest
   {
     final CloseableCollectionType<IOException> collection =
       CloseableCollection.create(IOException::new);
+
+    assertEquals(0, collection.size());
     collection.close();
   }
 
@@ -81,8 +85,11 @@ public final class CloseableCollectionTest
 
     try (CloseableCollectionType<ClosingResourceFailedException> c = CloseableCollection.create()) {
       r0 = c.add(new Resource(0));
+      assertEquals(1, c.size());
       r1 = c.add(new Resource(1));
+      assertEquals(2, c.size());
       r2 = c.add(new Resource(2));
+      assertEquals(3, c.size());
     }
 
     Assertions.assertTrue(r0.closed, "r0 closed");
@@ -101,9 +108,13 @@ public final class CloseableCollectionTest
     Assertions.assertThrows(ClosingResourceFailedException.class, () -> {
       try (CloseableCollectionType<ClosingResourceFailedException> c = CloseableCollection.create()) {
         resources.r0 = c.add(new Resource(0));
+        assertEquals(1, c.size());
         resources.r1 = c.add(new ResourceCrasher(1));
+        assertEquals(2, c.size());
         resources.r2 = c.add(new Resource(2));
+        assertEquals(3, c.size());
         resources.r3 = c.add(new ResourceCrasher(3));
+        assertEquals(4, c.size());
       }
     });
 

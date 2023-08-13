@@ -28,6 +28,8 @@ import org.slf4j.LoggerFactory;
 import java.io.Closeable;
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
  * Tests for {@link CloseableTracker}.
  */
@@ -64,6 +66,7 @@ public final class CloseableTrackerTest
   {
     final CloseableTrackerType<IOException> collection =
       CloseableTracker.create(IOException::new);
+    assertEquals(0, collection.size());
     collection.close();
   }
 
@@ -82,9 +85,13 @@ public final class CloseableTrackerTest
     final Resource r2;
 
     try (CloseableTrackerType<ClosingResourceFailedException> c = CloseableTracker.create()) {
+      assertEquals(0, c.size());
       r0 = c.add(new Resource(0));
+      assertEquals(1, c.size());
       r1 = c.add(new Resource(1));
+      assertEquals(2, c.size());
       r2 = c.add(new Resource(2));
+      assertEquals(3, c.size());
     }
 
     Assertions.assertTrue(r0.closed, "r0 closed");
@@ -107,12 +114,18 @@ public final class CloseableTrackerTest
     final Resource r2;
 
     try (CloseableTrackerType<ClosingResourceFailedException> c = CloseableTracker.create()) {
+      assertEquals(0, c.size());
       r0 = c.add(new Resource(0));
+      assertEquals(1, c.size());
       r1 = c.add(new Resource(1));
+      assertEquals(2, c.size());
       r2 = c.add(new Resource(2));
+      assertEquals(3, c.size());
 
       c.remove(r0);
+      assertEquals(2, c.size());
       c.remove(r1);
+      assertEquals(1, c.size());
     }
 
     Assertions.assertFalse(r0.closed, "r0 closed");
@@ -158,9 +171,13 @@ public final class CloseableTrackerTest
     final ResourceAuto r2;
 
     try (CloseableTrackerType<ClosingResourceFailedException> c = CloseableTracker.create()) {
+      assertEquals(0, c.size());
       r0 = c.addAuto(new ResourceAuto(0));
+      assertEquals(1, c.size());
       r1 = c.addAuto(new ResourceAuto(1));
+      assertEquals(2, c.size());
       r2 = c.addAuto(new ResourceAuto(2));
+      assertEquals(3, c.size());
     }
 
     Assertions.assertTrue(r0.closed, "r0 closed");
