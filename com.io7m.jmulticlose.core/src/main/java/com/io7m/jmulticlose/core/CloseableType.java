@@ -14,13 +14,21 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/**
- * Collective try-with-resources (Core)
- */
-
-@Export
-@Version("1.1.0")
 package com.io7m.jmulticlose.core;
 
-import org.osgi.annotation.bundle.Export;
-import org.osgi.annotation.versioning.Version;
+import org.osgi.annotation.versioning.ConsumerType;
+
+/**
+ * An extension of the {@link AutoCloseable} type that allows for checking
+ * if a resource is closed.
+ */
+
+@ConsumerType
+public interface CloseableType extends AutoCloseable
+{
+  /**
+   * @return {@code true} if this resource is closed
+   */
+
+  boolean isClosed();
+}

@@ -16,8 +16,9 @@
 
 package com.io7m.jmulticlose.tests;
 
-import com.io7m.jmulticlose.core.CloseableCollection;
-import com.io7m.jmulticlose.core.CloseableCollectionType;
+import com.io7m.jmulticlose.core.CloseableTracker;
+import com.io7m.jmulticlose.core.CloseableTrackerType;
+import com.io7m.jmulticlose.core.CloseableType;
 import com.io7m.jmulticlose.core.ClosingResourceFailedException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -27,13 +28,16 @@ import org.slf4j.LoggerFactory;
 import java.io.Closeable;
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
- * Tests for {@link CloseableCollection}.
+ * Tests for {@link CloseableTracker}.
  */
 
-public final class CloseableCollectionTest
+public final class CloseableTrackerTest
 {
-  private static final Logger LOG = LoggerFactory.getLogger(CloseableCollectionTest.class);
+  private static final Logger LOG =
+    LoggerFactory.getLogger(CloseableTrackerTest.class);
 
   /**
    * An empty collection raises no exceptions.
@@ -45,8 +49,8 @@ public final class CloseableCollectionTest
   public void testEmpty0()
     throws ClosingResourceFailedException
   {
-    final CloseableCollectionType<ClosingResourceFailedException> collection =
-      CloseableCollection.create();
+    final CloseableTrackerType<ClosingResourceFailedException> collection =
+      CloseableTracker.create();
     collection.close();
   }
 
@@ -60,8 +64,9 @@ public final class CloseableCollectionTest
   public void testEmpty1()
     throws IOException
   {
-    final CloseableCollectionType<IOException> collection =
-      CloseableCollection.create(IOException::new);
+    final CloseableTrackerType<IOException> collection =
+      CloseableTracker.create(IOException::new);
+    assertEquals(0, collection.size());
     collection.close();
   }
 
@@ -79,14 +84,52 @@ public final class CloseableCollectionTest
     final Resource r1;
     final Resource r2;
 
-    try (CloseableCollectionType<ClosingResourceFailedException> c = CloseableCollection.create()) {
+    try (CloseableTrackerType<ClosingResourceFailedException> c = CloseableTracker.create()) {
+      assertEquals(0, c.size());
       r0 = c.add(new Resource(0));
+      assertEquals(1, c.size());
       r1 = c.add(new Resource(1));
+      assertEquals(2, c.size());
       r2 = c.add(new Resource(2));
+      assertEquals(3, c.size());
     }
 
     Assertions.assertTrue(r0.closed, "r0 closed");
     Assertions.assertTrue(r1.closed, "r1 closed");
+    Assertions.assertTrue(r2.closed, "r2 closed");
+  }
+
+  /**
+   * Removed resources aren't closed.
+   *
+   * @throws Exception On errors
+   */
+
+  @Test
+  public void testRemove()
+    throws Exception
+  {
+    final Resource r0;
+    final Resource r1;
+    final Resource r2;
+
+    try (CloseableTrackerType<ClosingResourceFailedException> c = CloseableTracker.create()) {
+      assertEquals(0, c.size());
+      r0 = c.add(new Resource(0));
+      assertEquals(1, c.size());
+      r1 = c.add(new Resource(1));
+      assertEquals(2, c.size());
+      r2 = c.add(new Resource(2));
+      assertEquals(3, c.size());
+
+      c.remove(r0);
+      assertEquals(2, c.size());
+      c.remove(r1);
+      assertEquals(1, c.size());
+    }
+
+    Assertions.assertFalse(r0.closed, "r0 closed");
+    Assertions.assertFalse(r1.closed, "r1 closed");
     Assertions.assertTrue(r2.closed, "r2 closed");
   }
 
@@ -99,7 +142,7 @@ public final class CloseableCollectionTest
   {
     final Resources resources = new Resources();
     Assertions.assertThrows(ClosingResourceFailedException.class, () -> {
-      try (CloseableCollectionType<ClosingResourceFailedException> c = CloseableCollection.create()) {
+      try (CloseableTrackerType<ClosingResourceFailedException> c = CloseableTracker.create()) {
         resources.r0 = c.add(new Resource(0));
         resources.r1 = c.add(new ResourceCrasher(1));
         resources.r2 = c.add(new Resource(2));
@@ -111,6 +154,35 @@ public final class CloseableCollectionTest
     Assertions.assertTrue(resources.r1.closed, "r1 closed");
     Assertions.assertTrue(resources.r2.closed, "r2 closed");
     Assertions.assertTrue(resources.r3.closed, "r3 closed");
+  }
+
+  /**
+   * Resources are closed.
+   *
+   * @throws Exception On errors
+   */
+
+  @Test
+  public void testWrapped()
+    throws Exception
+  {
+    final ResourceAuto r0;
+    final ResourceAuto r1;
+    final ResourceAuto r2;
+
+    try (CloseableTrackerType<ClosingResourceFailedException> c = CloseableTracker.create()) {
+      assertEquals(0, c.size());
+      r0 = c.addAuto(new ResourceAuto(0));
+      assertEquals(1, c.size());
+      r1 = c.addAuto(new ResourceAuto(1));
+      assertEquals(2, c.size());
+      r2 = c.addAuto(new ResourceAuto(2));
+      assertEquals(3, c.size());
+    }
+
+    Assertions.assertTrue(r0.closed, "r0 closed");
+    Assertions.assertTrue(r1.closed, "r1 closed");
+    Assertions.assertTrue(r2.closed, "r2 closed");
   }
 
   private static final class Resources
@@ -126,7 +198,7 @@ public final class CloseableCollectionTest
     }
   }
 
-  private final class Resource implements Closeable
+  private final class Resource implements CloseableType
   {
     private final int x;
     private boolean closed;
@@ -142,9 +214,15 @@ public final class CloseableCollectionTest
       LOG.debug("Resource close " + this.x);
       this.closed = true;
     }
+
+    @Override
+    public boolean isClosed()
+    {
+      return this.closed;
+    }
   }
 
-  private final class ResourceCrasher implements Closeable
+  private final class ResourceCrasher implements CloseableType
   {
     private final int x;
     private boolean closed;
@@ -161,6 +239,30 @@ public final class CloseableCollectionTest
       LOG.debug("ResourceCrasher close " + this.x);
       this.closed = true;
       throw new IOException("Failed " + this.x);
+    }
+
+    @Override
+    public boolean isClosed()
+    {
+      return this.closed;
+    }
+  }
+
+  private final class ResourceAuto implements Closeable
+  {
+    private final int x;
+    private boolean closed;
+
+    ResourceAuto(final int in_x)
+    {
+      this.x = in_x;
+    }
+
+    @Override
+    public void close()
+    {
+      LOG.debug("Resource close " + this.x);
+      this.closed = true;
     }
   }
 }

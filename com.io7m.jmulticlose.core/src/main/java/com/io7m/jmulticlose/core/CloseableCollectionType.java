@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2023 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -16,21 +16,28 @@
 
 package com.io7m.jmulticlose.core;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
- * A collection of resources that can be closed.
+ * <p>A collection of resources that can be closed.</p>
  *
- * Resources are added to the collection with {@link #add(AutoCloseable)}, and are closed in the
- * reverse of the order in which they were added to the collection when {@link #close()} is called
- * (typically via a {@code try-with-resources} statement).
+ * <p>
+ * Resources are added to the collection with {@link #add(AutoCloseable)}, and
+ * are closed in the reverse of the order in which they were added to the
+ * collection when {@link #close()} is called (typically via a
+ * {@code try-with-resources} statement).</p>
  *
  * @param <E> The precise type of exceptions thrown on close failures
  */
 
-public interface CloseableCollectionType<E extends Exception> extends AutoCloseable
+@ProviderType
+public interface CloseableCollectionType<E extends Exception>
+  extends AutoCloseable
 {
   /**
-   * Close this collection. If any of the resources within the collection raise an exception upon
-   * being closed, add the exception as a <i>suppressed exception</i> to an exception {@code e},
+   * Close this collection. If any of the resources within the collection raise
+   * an exception upon being closed, add the exception as a
+   * <i>suppressed exception</i> to an exception {@code e},
    * continue closing resources, and at the end of the method, throw {@code e}.
    *
    * @throws E If required
@@ -39,6 +46,12 @@ public interface CloseableCollectionType<E extends Exception> extends AutoClosea
   @Override
   void close()
     throws E;
+
+  /**
+   * @return The size of the collection
+   */
+
+  int size();
 
   /**
    * Add a resource to be closed when this collection is closed.

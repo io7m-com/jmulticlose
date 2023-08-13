@@ -9,12 +9,12 @@
   <parent>
     <groupId>com.io7m.primogenitor</groupId>
     <artifactId>com.io7m.primogenitor.full</artifactId>
-    <version>7.1.0</version>
+    <version>8.0.0-beta0001</version>
   </parent>
 
   <groupId>com.io7m.jmulticlose</groupId>
   <artifactId>com.io7m.jmulticlose</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 
   <packaging>pom</packaging>
   <name>com.io7m.jmulticlose</name>
@@ -27,12 +27,12 @@
   </modules>
 
   <properties>
-    <io7m.api.previousVersion>0.0.1</io7m.api.previousVersion>
+    <io7m.api.previousVersion>1.0.0</io7m.api.previousVersion>
   </properties>
 
   <licenses>
     <license>
-      <name>ISC License</name>
+      <name>ISC</name>
       <url>https://io7m.com/license/isc.txt</url>
     </license>
   </licenses>
@@ -65,11 +65,11 @@
     </site>
     <repository>
       <id>sonatype-nexus-staging</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
     <snapshotRepository>
       <id>sonatype-nexus-snapshots</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
 
@@ -87,9 +87,14 @@
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.3.0-alpha14</version>
+        <version>1.4.11</version>
       </dependency>
 
+      <dependency>
+        <groupId>com.io7m.jcip</groupId>
+        <artifactId>com.io7m.jcip.annotations</artifactId>
+        <version>2.0.0</version>
+      </dependency>
       <dependency>
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.annotation.versioning</artifactId>
@@ -104,7 +109,7 @@
       <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter-engine</artifactId>
-        <version>5.8.2</version>
+        <version>5.10.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
