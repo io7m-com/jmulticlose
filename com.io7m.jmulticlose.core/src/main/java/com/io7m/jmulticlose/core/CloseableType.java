@@ -16,11 +16,14 @@
 
 package com.io7m.jmulticlose.core;
 
+import org.osgi.annotation.versioning.ConsumerType;
+
 /**
  * An extension of the {@link AutoCloseable} type that allows for checking
  * if a resource is closed.
  */
 
+@ConsumerType
 public interface CloseableType extends AutoCloseable
 {
   /**

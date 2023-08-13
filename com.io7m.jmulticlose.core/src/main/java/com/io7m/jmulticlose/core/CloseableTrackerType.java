@@ -16,6 +16,8 @@
 
 package com.io7m.jmulticlose.core;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * <p>A tracker of resources that can be closed.</p>
  *
@@ -34,6 +36,7 @@ package com.io7m.jmulticlose.core;
  * @param <E> The precise type of exceptions thrown on close failures
  */
 
+@ProviderType
 public interface CloseableTrackerType<E extends Exception> extends AutoCloseable
 {
   /**

@@ -16,6 +16,8 @@
 
 package com.io7m.jmulticlose.core;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * <p>A collection of resources that can be closed.</p>
  *
@@ -28,8 +30,9 @@ package com.io7m.jmulticlose.core;
  * @param <E> The precise type of exceptions thrown on close failures
  */
 
-public interface CloseableCollectionType<E extends Exception> extends
-  AutoCloseable
+@ProviderType
+public interface CloseableCollectionType<E extends Exception>
+  extends AutoCloseable
 {
   /**
    * Close this collection. If any of the resources within the collection raise
