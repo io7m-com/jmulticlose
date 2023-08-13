@@ -20,6 +20,7 @@ import net.jcip.annotations.ThreadSafe;
 
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 /**
@@ -29,7 +30,8 @@ import java.util.function.Supplier;
  */
 
 @ThreadSafe
-public final class CloseableTracker<E extends Exception> implements CloseableTrackerType<E>
+public final class CloseableTracker<E extends Exception> implements
+  CloseableTrackerType<E>
 {
   private final ConcurrentLinkedDeque<CloseableType> stack;
   private final Supplier<E> exceptions;
@@ -102,10 +104,50 @@ public final class CloseableTracker<E extends Exception> implements CloseableTra
   }
 
   @Override
+  public <T extends AutoCloseable> T addAuto(
+    final T resource)
+  {
+    this.stack.push(new CloseableWrapper<>(resource));
+    this.stack.removeIf(CloseableType::isClosed);
+    return resource;
+  }
+
+  @Override
   public <T extends CloseableType> void remove(
     final T resource)
   {
     this.stack.remove(resource);
     this.stack.removeIf(CloseableType::isClosed);
+  }
+
+  private final class CloseableWrapper<T extends AutoCloseable>
+    implements CloseableType
+  {
+    private final T value;
+    private final AtomicBoolean closed;
+
+    CloseableWrapper(
+      final T inValue)
+    {
+      this.value =
+        Objects.requireNonNull(inValue, "value");
+      this.closed =
+        new AtomicBoolean();
+    }
+
+    @Override
+    public boolean isClosed()
+    {
+      return this.closed.get();
+    }
+
+    @Override
+    public void close()
+      throws Exception
+    {
+      if (this.closed.compareAndSet(false, true)) {
+        this.value.close();
+      }
+    }
   }
 }

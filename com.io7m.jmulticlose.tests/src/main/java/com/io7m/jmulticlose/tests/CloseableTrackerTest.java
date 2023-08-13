@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 /**
@@ -142,6 +143,31 @@ public final class CloseableTrackerTest
     Assertions.assertTrue(resources.r3.closed, "r3 closed");
   }
 
+  /**
+   * Resources are closed.
+   *
+   * @throws Exception On errors
+   */
+
+  @Test
+  public void testWrapped()
+    throws Exception
+  {
+    final ResourceAuto r0;
+    final ResourceAuto r1;
+    final ResourceAuto r2;
+
+    try (CloseableTrackerType<ClosingResourceFailedException> c = CloseableTracker.create()) {
+      r0 = c.addAuto(new ResourceAuto(0));
+      r1 = c.addAuto(new ResourceAuto(1));
+      r2 = c.addAuto(new ResourceAuto(2));
+    }
+
+    Assertions.assertTrue(r0.closed, "r0 closed");
+    Assertions.assertTrue(r1.closed, "r1 closed");
+    Assertions.assertTrue(r2.closed, "r2 closed");
+  }
+
   private static final class Resources
   {
     Resource r0;
@@ -202,6 +228,24 @@ public final class CloseableTrackerTest
     public boolean isClosed()
     {
       return this.closed;
+    }
+  }
+
+  private final class ResourceAuto implements Closeable
+  {
+    private final int x;
+    private boolean closed;
+
+    ResourceAuto(final int in_x)
+    {
+      this.x = in_x;
+    }
+
+    @Override
+    public void close()
+    {
+      LOG.debug("Resource close " + this.x);
+      this.closed = true;
     }
   }
 }

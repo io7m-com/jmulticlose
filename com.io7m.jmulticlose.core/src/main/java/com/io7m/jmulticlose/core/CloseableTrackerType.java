@@ -61,6 +61,18 @@ public interface CloseableTrackerType<E extends Exception> extends AutoCloseable
   <T extends CloseableType> T add(T resource);
 
   /**
+   * Add a plain {@link AutoCloseable} resource to be closed when this tracker
+   * is closed.
+   *
+   * @param resource The resource
+   * @param <T>      The precise type of resource
+   *
+   * @return {@code resource}
+   */
+
+  <T extends AutoCloseable> T addAuto(T resource);
+
+  /**
    * Remove resource from this tracker.
    *
    * @param resource The resource
