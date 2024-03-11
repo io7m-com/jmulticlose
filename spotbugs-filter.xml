@@ -6,6 +6,7 @@
       <Bug pattern="OPM_OVERLY_PERMISSIVE_METHOD"/>
       <Bug pattern="IMC_IMMATURE_CLASS_NO_TOSTRING"/>
       <Bug pattern="DRE_DECLARED_RUNTIME_EXCEPTION"/>
+      <Bug pattern="WEM_WEAK_EXCEPTION_MESSAGING"/>
     </Or>
   </Match>
 
