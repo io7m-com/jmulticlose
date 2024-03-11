@@ -29,9 +29,9 @@
         </c:change>
       </c:changes>
     </c:release>
-    <c:release date="2024-03-11T12:47:08+00:00" is-open="true" ticket-system="com.github.io7m.jmulticlose" version="1.1.2">
+    <c:release date="2024-03-11T12:50:08+00:00" is-open="false" ticket-system="com.github.io7m.jmulticlose" version="1.1.2">
       <c:changes>
-        <c:change date="2024-03-11T12:47:08+00:00" summary="Adjust contract of CloseableCollection.add()"/>
+        <c:change date="2024-03-11T00:00:00+00:00" summary="Adjust contract of CloseableCollection.add()"/>
       </c:changes>
     </c:release>
   </c:releases>
