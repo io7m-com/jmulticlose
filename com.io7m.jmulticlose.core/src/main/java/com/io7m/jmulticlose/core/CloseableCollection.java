@@ -20,6 +20,7 @@ import net.jcip.annotations.ThreadSafe;
 
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 /**
@@ -29,15 +30,21 @@ import java.util.function.Supplier;
  */
 
 @ThreadSafe
-public final class CloseableCollection<E extends Exception> implements CloseableCollectionType<E>
+public final class CloseableCollection<E extends Exception>
+  implements CloseableCollectionType<E>
 {
   private final ConcurrentLinkedDeque<AutoCloseable> stack;
   private final Supplier<E> exceptions;
+  private final AtomicBoolean closed;
 
   private CloseableCollection(final Supplier<E> in_exceptions)
   {
-    this.exceptions = Objects.requireNonNull(in_exceptions, "exceptions");
-    this.stack = new ConcurrentLinkedDeque<>();
+    this.exceptions =
+      Objects.requireNonNull(in_exceptions, "exceptions");
+    this.stack =
+      new ConcurrentLinkedDeque<>();
+    this.closed =
+      new AtomicBoolean(false);
   }
 
   /**
@@ -71,22 +78,22 @@ public final class CloseableCollection<E extends Exception> implements Closeable
   public void close()
     throws E
   {
-    E e = null;
-
-    while (!this.stack.isEmpty()) {
-      final AutoCloseable resource = this.stack.pop();
-      try {
-        resource.close();
-      } catch (final Exception re) {
-        if (e == null) {
-          e = this.exceptions.get();
+    if (this.closed.compareAndSet(false, true)) {
+      E e = null;
+      while (!this.stack.isEmpty()) {
+        try {
+          this.stack.pop().close();
+        } catch (final Exception re) {
+          if (e == null) {
+            e = this.exceptions.get();
+          }
+          e.addSuppressed(re);
         }
-        e.addSuppressed(re);
       }
-    }
 
-    if (e != null) {
-      throw e;
+      if (e != null) {
+        throw e;
+      }
     }
   }
 
