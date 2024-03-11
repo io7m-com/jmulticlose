@@ -106,7 +106,10 @@ public final class CloseableCollection<E extends Exception>
   @Override
   public <T extends AutoCloseable> T add(final T resource)
   {
-    this.stack.push(Objects.requireNonNull(resource, "resource"));
-    return resource;
+    if (!this.closed.get()) {
+      this.stack.push(Objects.requireNonNull(resource, "resource"));
+      return resource;
+    }
+    throw new IllegalStateException("Collection is closed.");
   }
 }

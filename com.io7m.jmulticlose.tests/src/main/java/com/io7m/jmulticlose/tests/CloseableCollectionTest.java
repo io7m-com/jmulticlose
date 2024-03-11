@@ -78,6 +78,25 @@ public final class CloseableCollectionTest
   }
 
   /**
+   * Adding a resource to a closed collection is not permitted.
+   *
+   * @throws IOException On errors
+   */
+
+  @Test
+  public void testClosed0()
+    throws IOException
+  {
+    final CloseableCollectionType<IOException> collection =
+      CloseableCollection.create(IOException::new);
+
+    collection.close();
+    Assertions.assertThrows(IllegalStateException.class, () -> {
+      collection.add(new Resource(0));
+    });
+  }
+
+  /**
    * Resources are closed.
    *
    * @throws Exception On errors
