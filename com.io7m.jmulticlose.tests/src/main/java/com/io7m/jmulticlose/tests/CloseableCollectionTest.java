@@ -20,12 +20,19 @@ import com.io7m.jmulticlose.core.CloseableCollection;
 import com.io7m.jmulticlose.core.CloseableCollectionType;
 import com.io7m.jmulticlose.core.ClosingResourceFailedException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -35,7 +42,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public final class CloseableCollectionTest
 {
-  private static final Logger LOG = LoggerFactory.getLogger(CloseableCollectionTest.class);
+  private static final Logger LOG = LoggerFactory.getLogger(
+    CloseableCollectionTest.class);
 
   /**
    * An empty collection raises no exceptions.
@@ -124,6 +132,51 @@ public final class CloseableCollectionTest
     Assertions.assertTrue(resources.r3.closed, "r3 closed");
   }
 
+  /**
+   * Multithreaded closing works.
+   */
+
+  @Test
+  @RepeatedTest(value = 100, failureThreshold = 1)
+  public void testThreadSafety()
+    throws InterruptedException
+  {
+    final var resources = new ArrayList<Resource>();
+    for (int index = 0; index < 1000; ++index) {
+      resources.add(new Resource(index));
+    }
+
+    final var collection = CloseableCollection.create();
+    for (final var resource : resources) {
+      collection.add(resource);
+    }
+
+    final var executor = Executors.newFixedThreadPool(20);
+    try {
+      for (int index = 0; index < 20; ++index) {
+        executor.execute(() -> {
+          try {
+            collection.close();
+          } catch (final Throwable e) {
+            throw new RuntimeException(e);
+          }
+        });
+      }
+    } finally {
+      executor.shutdown();
+      executor.awaitTermination(5L, TimeUnit.SECONDS);
+    }
+
+    Assertions.assertAll(
+      resources.stream()
+        .map(x -> (Executable) () -> {
+          Assertions.assertTrue(x.closed);
+          assertEquals(1, x.attempts.get());
+        })
+        .collect(Collectors.toList())
+    );
+  }
+
   private static final class Resources
   {
     Resource r0;
@@ -140,11 +193,13 @@ public final class CloseableCollectionTest
   private final class Resource implements Closeable
   {
     private final int x;
-    private boolean closed;
+    private volatile boolean closed;
+    private final AtomicInteger attempts;
 
     Resource(final int in_x)
     {
       this.x = in_x;
+      this.attempts = new AtomicInteger();
     }
 
     @Override
@@ -152,6 +207,7 @@ public final class CloseableCollectionTest
     {
       LOG.debug("Resource close " + this.x);
       this.closed = true;
+      this.attempts.incrementAndGet();
     }
   }
 

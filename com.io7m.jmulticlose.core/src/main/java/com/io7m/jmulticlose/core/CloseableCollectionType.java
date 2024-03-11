@@ -60,7 +60,10 @@ public interface CloseableCollectionType<E extends Exception>
    * @param <T>      The precise type of resource
    *
    * @return {@code resource}
+   *
+   * @throws IllegalStateException If {@link #close()} has been called
    */
 
-  <T extends AutoCloseable> T add(T resource);
+  <T extends AutoCloseable> T add(T resource)
+    throws IllegalStateException;
 }
