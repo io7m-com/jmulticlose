@@ -29,13 +29,18 @@
         </c:change>
       </c:changes>
     </c:release>
-    <c:release date="2024-03-11T12:50:08+00:00" is-open="false" ticket-system="com.github.io7m.jmulticlose" version="1.1.2">
+    <c:release date="2024-03-11T00:00:00+00:00" is-open="false" ticket-system="com.github.io7m.jmulticlose" version="1.1.2">
       <c:changes>
         <c:change date="2024-03-11T00:00:00+00:00" summary="Adjust contract of CloseableCollection.add()"/>
       </c:changes>
     </c:release>
+    <c:release date="2024-04-30T09:29:55+00:00" is-open="true" ticket-system="com.github.io7m.jmulticlose" version="2.0.0">
+      <c:changes>
+        <c:change compatible="false" date="2024-04-30T09:29:55+00:00" summary="Require JDK 21"/>
+      </c:changes>
+    </c:release>
   </c:releases>
   <c:ticket-systems>
-    <c:ticket-system default="true" id="com.github.io7m.jmulticlose" url="http://www.github.com/io7m/jmulticlose/issues/"/>
+    <c:ticket-system default="true" id="com.github.io7m.jmulticlose" url="http://www.github.com/io7m-com/jmulticlose/issues/"/>
   </c:ticket-systems>
 </c:changelog>
